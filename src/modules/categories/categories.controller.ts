@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Param, Patch, Post } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UsecasesResolver } from '../../libs/usecases-resolver';
 import { CreateCategoryDto } from './dto/create-category.dto';
@@ -6,6 +6,8 @@ import { CreateCategoryUsecase } from './usecases/create-category.usecase';
 import { GetCategoriesUsecase } from './usecases/get-categories.usecase';
 import { CreateTagDto } from './dto/create-tag.dto';
 import { CreateTagUsecase } from './usecases/create-tag.usecase';
+import { UpdateCategoryDto } from './dto/update-category.dto';
+import { UpdateCategoryUsecase } from './usecases/update-category.usecase';
 
 @ApiTags('categories')
 @Controller('categories')
@@ -21,14 +23,6 @@ export class CategoriesController {
     return { category };
   }
 
-  @ApiOperation({ summary: 'Get categories' })
-  @Get()
-  public async getCategories(): Promise<any> {
-    const usecase = this.usecasesResolver.get<GetCategoriesUsecase>(GetCategoriesUsecase);
-    const categories = await usecase.execute();
-    return { categories };
-  }
-
   @ApiOperation({ summary: 'Admin only. Create tag' })
   @HttpCode(201)
   @Post('/tags')
@@ -36,5 +30,21 @@ export class CategoriesController {
     const usecase = this.usecasesResolver.get<CreateTagUsecase>(CreateTagUsecase);
     const tag = await usecase.execute(fields);
     return { tag };
+  }
+
+  @ApiOperation({ summary: 'Admin only. Update category' })
+  @Patch('/:id')
+  public async updateResource(@Param('id') id: number, @Body() fields: UpdateCategoryDto): Promise<any> {
+    const usecase = this.usecasesResolver.get<UpdateCategoryUsecase>(UpdateCategoryUsecase);
+    const category = await usecase.execute(id, fields);
+    return { category };
+  }
+
+  @ApiOperation({ summary: 'Get categories' })
+  @Get()
+  public async getCategories(): Promise<any> {
+    const usecase = this.usecasesResolver.get<GetCategoriesUsecase>(GetCategoriesUsecase);
+    const categories = await usecase.execute();
+    return { categories };
   }
 }

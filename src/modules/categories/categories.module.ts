@@ -9,10 +9,11 @@ import { CreateCategoryUsecase } from './usecases/create-category.usecase';
 import { GetCategoriesUsecase } from './usecases/get-categories.usecase';
 import { CreateTagUsecase } from './usecases/create-tag.usecase';
 import { Resource } from '../resources/entities/resource.entity';
+import { UpdateCategoryUsecase } from './usecases/update-category.usecase';
 
 @Module({
   imports: [DiscoveryModule, TypeOrmModule.forFeature([Category, Tag, Resource])],
-  providers: [CreateCategoryUsecase, GetCategoriesUsecase, CreateTagUsecase, UsecasesResolver],
+  providers: [CreateCategoryUsecase, GetCategoriesUsecase, CreateTagUsecase, UpdateCategoryUsecase, UsecasesResolver],
   controllers: [CategoriesController],
 })
 export class CategoriesModule {}

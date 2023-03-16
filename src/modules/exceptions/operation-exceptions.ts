@@ -9,6 +9,10 @@ interface ResourceNotFound {
   id: number;
 }
 
+interface CategoryNotFound {
+  id: number;
+}
+
 @Injectable()
 export class OperationExceptions {
   public readonly users = {
@@ -17,5 +21,9 @@ export class OperationExceptions {
 
   public readonly resources = {
     notFound: (info: ResourceNotFound) => new OperationException('RESOURCE_NOT_FOUND', info),
+  };
+
+  public readonly categories = {
+    notFound: (info: CategoryNotFound) => new OperationException('CATEGORY_NOT_FOUND', info),
   };
 }

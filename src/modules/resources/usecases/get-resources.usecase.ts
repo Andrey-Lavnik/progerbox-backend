@@ -1,19 +1,29 @@
 import { IUsecase } from '../../../shared/usecase.interface';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOptionsWhere, Repository } from 'typeorm';
-import { Resource } from '../entities/resource.entity';
+import { In, Repository } from 'typeorm';
+import { Resource, ResourceType } from '../entities/resource.entity';
 import { Usecase } from '../../../libs/usecases-resolver';
 import { GetResourcesQueryDto } from '../dto/get-resources-query.dto';
 import { Category } from '../../categories/entities/category.entity';
-import { Tag } from '../../categories/entities/tag.entity';
+import { LanguageTag } from '../../../shared/types';
 
 interface ResourceItem {
   id: number;
+  name: string;
+  description: string;
+  type: ResourceType;
   url: string;
+  language: LanguageTag;
+  author: {
+    id: number;
+    username: string;
+  };
   tags: {
+    id: number;
     name: string;
   }[];
   categories: {
+    id: number;
     name: string;
     type: string;
   }[];
@@ -29,14 +39,16 @@ export class GetResourcesUsecase implements IUsecase {
   ) {}
 
   public async execute(query: GetResourcesQueryDto): Promise<ResourceItem[]> {
-    const tagsWhereId: FindOptionsWhere<Tag>[] = (query.tags ?? []).map((id) => ({ id }));
-    const categoriesWhereId: FindOptionsWhere<Tag>[] = (query.categories ?? []).map((id) => ({ category: { id } }));
-    const tagsWhere = [...tagsWhereId, ...categoriesWhereId];
-
     const resources = await this.resourcesRepository.find({
-      relations: ['tags', 'tags.category'],
+      relations: ['tags', 'tags.category', 'author'],
       where: {
-        tags: tagsWhere,
+        authorId: query.authorId,
+        tags: {
+          id: query.tags ? In(query.tags) : undefined,
+          category: {
+            id: query.categories ? In(query.categories) : undefined,
+          },
+        },
       },
     });
 
@@ -44,15 +56,25 @@ export class GetResourcesUsecase implements IUsecase {
     for (const resource of resources) {
       const obj: ResourceItem = {
         id: resource.id,
+        name: resource.name,
+        description: resource.description,
+        type: resource.type,
         url: resource.url,
+        language: resource.language,
+        author: {
+          id: resource.author.id,
+          username: resource.author.username,
+        },
         tags: [],
         categories: [],
       };
       for (const tag of resource.tags) {
         obj.tags.push({
+          id: tag.id,
           name: tag.name,
         });
         obj.categories.push({
+          id: tag.category.id,
           name: tag.category.name,
           type: tag.category.type,
         });

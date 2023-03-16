@@ -20,6 +20,9 @@ export class Category {
   })
   type: CategoryType;
 
+  @Column()
+  description: string;
+
   @CreateDateColumn()
   createdAt: Date;
 

@@ -22,19 +22,19 @@ export class ResourcesController {
     return { resource };
   }
 
-  @ApiOperation({ summary: 'Get resources with tags and categories' })
-  @Get()
-  public async getResources(@Query() query: GetResourcesQueryDto): Promise<any> {
-    const usecase = this.usecasesResolver.get<GetResourcesUsecase>(GetResourcesUsecase);
-    const result = await usecase.execute(query);
-    return { result };
-  }
-
   @ApiOperation({ summary: 'Admin only. Update resource' })
   @Patch('/:id')
   public async updateResource(@Param('id') id: number, @Body() fields: UpdateResourceDto): Promise<any> {
     const usecase = this.usecasesResolver.get<UpdateResourceUsecase>(UpdateResourceUsecase);
     const resource = await usecase.execute(id, fields);
     return { resource };
+  }
+
+  @ApiOperation({ summary: 'Get resources with tags and categories' })
+  @Get()
+  public async getResources(@Query() query: GetResourcesQueryDto): Promise<any> {
+    const usecase = this.usecasesResolver.get<GetResourcesUsecase>(GetResourcesUsecase);
+    const result = await usecase.execute(query);
+    return { result };
   }
 }

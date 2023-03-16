@@ -7,6 +7,7 @@ import { Usecase } from '../../../libs/usecases-resolver';
 interface CategoryItem {
   id: number;
   name: string;
+  description: string;
   type: string;
 }
 
@@ -22,6 +23,7 @@ export class GetCategoriesUsecase implements IUsecase {
     return categories.map((category) => ({
       id: category.id,
       name: category.name,
+      description: category.description,
       type: category.type,
     }));
   }

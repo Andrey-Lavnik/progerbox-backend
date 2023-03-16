@@ -15,4 +15,9 @@ export class GetResourcesQueryDto {
   @IsOptional()
   @IsNumber({ allowNaN: false }, { each: true })
   tags?: number[];
+
+  @Transform(({ value }) => +value)
+  @IsOptional()
+  @IsNumber({ allowNaN: false })
+  authorId?: number;
 }

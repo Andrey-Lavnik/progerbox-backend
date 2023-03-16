@@ -1,11 +1,12 @@
 import { IUsecase } from '../../../shared/usecase.interface';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { Resource } from '../entities/resource.entity';
 import { OperationExceptions } from '../../exceptions/operation-exceptions';
 import { Usecase } from '../../../libs/usecases-resolver';
 import { UpdateResourceDto } from '../dto/update-resource.dto';
 import { Tag } from '../../categories/entities/tag.entity';
+import { User } from '../../users/entities/user.entity';
 
 @Usecase()
 export class UpdateResourceUsecase implements IUsecase {
@@ -14,12 +15,15 @@ export class UpdateResourceUsecase implements IUsecase {
     private readonly resourcesRepository: Repository<Resource>,
     @InjectRepository(Tag)
     private readonly tagsRepository: Repository<Tag>,
+    @InjectRepository(User)
+    private readonly usersRepository: Repository<User>,
     private readonly operationExceptions: OperationExceptions,
   ) {}
 
   public async execute(id: number, fields: UpdateResourceDto): Promise<Resource> {
-    const tagsWhere = (fields.tagsIds ?? []).map((id) => ({ id }));
-    const tags = await this.tagsRepository.findBy(tagsWhere);
+    const tags = await this.tagsRepository.findBy({
+      id: fields.tagsIds ? In(fields.tagsIds) : undefined,
+    });
 
     const resource = await this.resourcesRepository.findOne({
       relations: {
@@ -32,8 +36,19 @@ export class UpdateResourceUsecase implements IUsecase {
       throw this.operationExceptions.resources.notFound({ id });
     }
 
-    resource.tags = tags;
+    if (fields.authorId) {
+      const user = await this.usersRepository.findOne({
+        where: {
+          id: fields.authorId,
+        },
+      });
 
+      if (!user) {
+        throw this.operationExceptions.users.notFound({ id: fields.authorId });
+      }
+    }
+
+    resource.tags = tags;
     await this.resourcesRepository.save({
       ...resource,
       ...fields,

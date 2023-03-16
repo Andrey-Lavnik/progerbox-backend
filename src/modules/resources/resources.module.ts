@@ -9,9 +9,10 @@ import { Resource } from './entities/resource.entity';
 import { Tag } from '../categories/entities/tag.entity';
 import { GetResourcesUsecase } from './usecases/get-resources.usecase';
 import { Category } from '../categories/entities/category.entity';
+import { User } from '../users/entities/user.entity';
 
 @Module({
-  imports: [DiscoveryModule, TypeOrmModule.forFeature([Resource, Tag, Category])],
+  imports: [DiscoveryModule, TypeOrmModule.forFeature([Resource, Tag, Category, User])],
   providers: [CreateResourceUsecase, UpdateResourceUsecase, GetResourcesUsecase, UsecasesResolver],
   controllers: [ResourcesController],
 })
