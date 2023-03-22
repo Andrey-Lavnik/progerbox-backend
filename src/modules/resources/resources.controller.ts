@@ -7,6 +7,8 @@ import { CreateResourceUsecase } from './usecases/create-resource.usecase';
 import { UpdateResourceUsecase } from './usecases/update-resource.usecase';
 import { GetResourcesQueryDto } from './dto/get-resources-query.dto';
 import { GetResourcesUsecase } from './usecases/get-resources.usecase';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { UserRole } from '../users/entities/user.entity';
 
 @ApiTags('resources')
 @Controller('resources')
@@ -15,6 +17,7 @@ export class ResourcesController {
 
   @ApiOperation({ summary: 'Admin only. Create resource' })
   @HttpCode(201)
+  @Roles(UserRole.ADMIN)
   @Post()
   public async createResource(@Body() fields: CreateResourceDto): Promise<any> {
     const usecase = this.usecasesResolver.get<CreateResourceUsecase>(CreateResourceUsecase);
@@ -23,6 +26,7 @@ export class ResourcesController {
   }
 
   @ApiOperation({ summary: 'Admin only. Update resource' })
+  @Roles(UserRole.ADMIN)
   @Patch('/:id')
   public async updateResource(@Param('id') id: number, @Body() fields: UpdateResourceDto): Promise<any> {
     const usecase = this.usecasesResolver.get<UpdateResourceUsecase>(UpdateResourceUsecase);

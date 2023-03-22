@@ -6,6 +6,8 @@ import { Config } from '../config/config';
 import { ExceptionsModule } from '../exceptions/exceptions.module';
 import { ResourcesModule } from '../resources/resources.module';
 import { CategoriesModule } from '../categories/categories.module';
+import { AuthModule } from '../auth/auth.module';
+import { RolesGuard } from '../auth/guards/roles.guard';
 
 @Module({
   imports: [
@@ -27,6 +29,8 @@ import { CategoriesModule } from '../categories/categories.module';
     UsersModule,
     CategoriesModule,
     ResourcesModule,
+    AuthModule,
   ],
+  providers: [RolesGuard],
 })
 export class AppModule {}

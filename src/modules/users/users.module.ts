@@ -7,9 +7,11 @@ import { CreateUserUsecase } from './usecases/create-user.usecase';
 import { GetUserByIdUsecase } from './usecases/get-user-by-id.usecase';
 import { GetUsersUsecase } from './usecases/get-users.usecase';
 import { UsecasesResolver } from '../../libs/usecases-resolver';
+import { CryptographyModule } from '../cryptography/cryptography.module';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
-  imports: [DiscoveryModule, TypeOrmModule.forFeature([User])],
+  imports: [DiscoveryModule, CryptographyModule, AuthModule, TypeOrmModule.forFeature([User])],
   providers: [CreateUserUsecase, GetUserByIdUsecase, GetUsersUsecase, UsecasesResolver],
   controllers: [UsersController],
 })
