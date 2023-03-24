@@ -11,6 +11,9 @@ export class RolesGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest() as Request;
     const roles = this.reflector.get<string[]>(METADATA_ROLES_KEY, context.getHandler());
+
+    if (!roles?.length) return true;
+
     const cookie = request.signedCookies[COOKIE_KEY];
 
     if (!cookie) {
@@ -24,7 +27,7 @@ export class RolesGuard implements CanActivate {
       throw new UnauthorizedException();
     }
 
-    if (roles?.length && !roles.includes(payload.role)) {
+    if (!roles.includes(payload.role)) {
       throw new ForbiddenException();
     }
 
