@@ -5,8 +5,6 @@ import { UpdateCategoryUsecase } from '@usecases/categories/update-category.usec
 
 @Injectable()
 export class CategoriesUsecases {
-  public static list = [CreateCategoryUsecase, GetCategoriesUsecase, UpdateCategoryUsecase];
-
   constructor(
     public readonly createCategory: CreateCategoryUsecase,
     public readonly getCategories: GetCategoriesUsecase,

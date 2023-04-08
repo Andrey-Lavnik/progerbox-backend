@@ -21,7 +21,10 @@ const usecaseResolvers = [
   imports: [PostgresModule, ExceptionsModule, AuthModule, CryptographyModule],
   providers: [
     ...usecaseResolvers,
-    ...usecaseResolvers.reduce((acc, resolver) => [...acc, ...resolver.list], []),
+    ...usecaseResolvers.reduce(
+      (acc, resolver) => [...acc, ...Reflect.getMetadata('design:paramtypes', resolver)],
+      [],
+    ),
   ],
   exports: usecaseResolvers,
 })
